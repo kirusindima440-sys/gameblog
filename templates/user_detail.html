@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}{% endblock %}
+
+{% block content %}
+<a href="/users" class="btn">← Назад к авторам</a>
+
+<div class="card" style="margin-top: 20px;">
+    <h1>👤 {{ user.username }}</h1>
+    <p><strong>Email:</strong> {{ user.email or 'Не указан' }}</p>
+    <p><strong>Дата регистрации:</strong> {{ user.created_at.strftime('%d.%m.%Y') }}</p>
+    <p><strong>Всего обзоров:</strong> {{ reviews|length }}</p>
+</div>
+
+<h2>📝 Обзоры {{ user.username }}</h2>
+
+<div class="reviews-grid">
+    {% for review in reviews %}
+    <div class="card">
+        <h3>{{ review.game.title }}</h3>
+        <div class="rating">{{ review.stars }}</div>
+        <p>{{ review.short_review }}</p>
+        <p><small>{{ review.created_at.strftime('%d.%m.%Y') }}</small></p>
+        <a href="/review/{{ review.id }}" class="btn">Читать полностью →</a>
+    </div>
+    {% else %}
+    <div class="card">
+        <p>😢 У {{ user.username }} пока нет обзоров</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

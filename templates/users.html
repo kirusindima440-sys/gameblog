@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Все авторы{% endblock %}
+
+{% block content %}
+<h1>👥 Все авторы</h1>
+
+<div class="reviews-grid">
+    {% for user in users %}
+    <div class="card">
+        <h2>{{ user.username }}</h2>
+        <p><strong>Email:</strong> {{ user.email or 'Не указан' }}</p>
+        <p><strong>Всего обзоров:</strong> {{ user.reviews|length }}</p>
+        <p><strong>Дата регистрации:</strong> {{ user.created_at.strftime('%d.%m.%Y') }}</p>
+        <a href="/user/{{ user.id }}" class="btn">Смотреть обзоры →</a>
+    </div>
+    {% else %}
+    <div class="card">
+        <p>😢 Пока нет пользователей</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

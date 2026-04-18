@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Все игры{% endblock %}
+
+{% block content %}
+<h1>🎮 Список игр</h1>
+
+<div class="reviews-grid">
+    {% for game in games %}
+    <div class="card">
+        <h2>{{ game.title }}</h2>
+        <p><strong>Жанр:</strong> {{ game.genre }}</p>
+        <p><strong>Всего обзоров:</strong> {{ game.reviews_count }}</p>
+        <a href="/game/{{ game.id }}" class="btn btn-primary">Смотреть обзоры →</a>
+    </div>
+    {% else %}
+    <div class="card">
+        <p>😢 Пока нет игр</p>
+        <a href="/add" class="btn btn-primary">Добавить первый обзор</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

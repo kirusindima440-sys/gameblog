@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1>✏️ Редактировать обзор</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>🎮 Название игры</label>
+            <input type="text" name="game_name" value="{{ review.game.title }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>🏷️ Жанр</label>
+            <select name="genre" required>
+                <option value="RPG" {% if review.game.genre == 'RPG' %}selected{% endif %}>RPG</option>
+                <option value="Action" {% if review.game.genre == 'Action' %}selected{% endif %}>Action</option>
+                <option value="Shooter" {% if review.game.genre == 'Shooter' %}selected{% endif %}>Shooter</option>
+                <option value="Strategy" {% if review.game.genre == 'Strategy' %}selected{% endif %}>Strategy</option>
+                <option value="Adventure" {% if review.game.genre == 'Adventure' %}selected{% endif %}>Adventure</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>⭐ Оценка (1-5)</label>
+            <input type="number" name="rating" min="1" max="5" value="{{ review.rating }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label>📝 Текст обзора</label>
+            <textarea name="review_text" rows="6" required>{{ review.review_text }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn">Сохранить</button>
+        <a href="/review/{{ review.id }}" class="btn btn-warning">Отмена</a>
+    </form>
+</div>
+{% endblock %}

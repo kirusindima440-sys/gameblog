@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить обзор{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1>✍️ Написать обзор</h1>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>🎮 Название игры</label>
+            <input type="text" name="game_name" placeholder="Например: The Witcher 3" required>
+        </div>
+        
+        <div class="form-group">
+            <label>🏷️ Жанр</label>
+            <select name="genre" required>
+                <option value="">Выбери жанр</option>
+                <option value="RPG">RPG</option>
+                <option value="Action">Action</option>
+                <option value="Shooter">Shooter</option>
+                <option value="Strategy">Strategy</option>
+                <option value="Adventure">Adventure</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>⭐ Оценка (1-5)</label>
+            <input type="number" name="rating" min="1" max="5" required>
+        </div>
+        
+        <div class="form-group">
+            <label>📝 Текст обзора</label>
+            <textarea name="review_text" rows="6" placeholder="Что думаешь об игре?" required></textarea>
+        </div>
+        
+        <button type="submit">📤 Опубликовать</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<h1>🎮 Игровые обзоры</h1>
+
+<div class="reviews-grid">
+    {% for review in reviews %}
+    <div class="card">
+        <h2>{{ review.game.title }}</h2>
+        <div class="rating">{{ review.stars }}</div>
+        <p><strong>Жанр:</strong> {{ review.game.genre }}</p>
+        <p><strong>Автор:</strong> {{ review.author.username }}</p>
+        <p>{{ review.short_review }}</p>
+        <a href="/review/{{ review.id }}" class="btn btn-primary">Читать →</a>
+    </div>
+    {% else %}
+    <div class="card">
+        <p>😢 Пока нет обзоров</p>
+        <a href="/add" class="btn btn-primary">Написать первый</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

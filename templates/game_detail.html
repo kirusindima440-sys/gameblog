@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ game.title }}{% endblock %}
+
+{% block content %}
+<a href="/games" class="btn">← Назад к играм</a>
+
+<div class="card" style="margin-top: 20px;">
+    <h1>{{ game.title }}</h1>
+    <p><strong>Жанр:</strong> {{ game.genre }}</p>
+    <p><strong>Всего обзоров:</strong> {{ reviews|length }}</p>
+</div>
+
+<h2>📝 Обзоры на эту игру</h2>
+
+<div class="reviews-grid">
+    {% for review in reviews %}
+    <div class="card">
+        <div class="rating">{{ review.stars }}</div>
+        <p><strong>Автор:</strong> {{ review.author.username }}</p>
+        <p>{{ review.short_review }}</p>
+        <p><small>{{ review.created_at.strftime('%d.%m.%Y') }}</small></p>
+        <a href="/review/{{ review.id }}" class="btn btn-primary">Читать полностью →</a>
+    </div>
+    {% else %}
+    <div class="card">
+        <p>😢 Пока нет обзоров на эту игру</p>
+        <a href="/add" class="btn btn-primary">Будь первым!</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

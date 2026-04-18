@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}{{ review.game.title }}{% endblock %}
+
+{% block content %}
+<a href="/" class="btn">← Назад</a>
+
+<div class="card" style="margin-top: 20px;">
+    <h1>{{ review.game.title }}</h1>
+    <div class="rating">{{ review.stars }}</div>
+    <p><strong>Жанр:</strong> {{ review.game.genre }}</p>
+    <p><strong>Автор:</strong> {{ review.author.username }}</p>
+    <p><strong>Дата:</strong> {{ review.created_at.strftime('%d.%m.%Y') }}</p>
+    <p><strong>👁️ Просмотров:</strong> {{ review.views }}</p>
+    <hr>
+    <p style="white-space: pre-wrap;">{{ review.review_text }}</p>
+    <hr>
+    
+    {% if current_user.id == review.user_id %}
+        <a href="/edit/{{ review.id }}" class="btn btn-warning">✏️ Редактировать</a>
+        <a href="/delete/{{ review.id }}" class="btn btn-danger" 
+           onclick="return confirm('Точно удалить?')">🗑️ Удалить</a>
+    {% endif %}
+</div>
+{% endblock %}

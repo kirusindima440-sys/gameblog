@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>👤 {{ user.username }}</h1>
+    <p><strong>Email:</strong> {{ user.email or 'Не указан' }}</p>
+    <p><strong>Дата регистрации:</strong> {{ user.created_at.strftime('%d.%m.%Y') }}</p>
+    <p><strong>Всего обзоров:</strong> {{ reviews|length }}</p>
+</div>
+
+<h2>📝 Мои обзоры</h2>
+
+<div class="reviews-grid">
+    {% for review in reviews %}
+    <div class="card">
+        <h3>{{ review.game.title }}</h3>
+        <div class="rating">{{ review.stars }}</div>
+        <p>{{ review.short_review }}</p>
+        <a href="/review/{{ review.id }}" class="btn btn-primary">Читать →</a>
+    </div>
+    {% else %}
+    <div class="card">
+        <p>У вас пока нет обзоров</p>
+        <a href="/add" class="btn btn-primary">Написать первый</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
