@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user  # ИСПРАВЛЕНО!
 from database import db, init_db
 from models import Review, User, Game
@@ -74,11 +74,17 @@ def add_review():
 @login_required 
 def show_review(review_id):
     review = Review.query.get_or_404(review_id)
-    review.views += 1
-    db.session.commit()
+
+    # Создаём ключ для этого обзора в сессии
+    viewed_key = f'viewed_review_{review_id}'
+    
+    # Если пользователь ещё не смотрел этот обзор
+    if not session.get(viewed_key):
+        review.views += 1
+        db.session.commit()
+        session[viewed_key] = True  # Запоминаем, что смотрел
+    
     return render_template('review.html', review=review)
-
-
 @app.route('/games')
 @login_required
 def games_list():
