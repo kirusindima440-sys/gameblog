@@ -10,7 +10,8 @@ class User(db.Model, UserMixin):
     
     __tablename__ = 'users'
     
-    id = db.Column(db.Integer, primary_key=True)  # было primaty_key
+    id = db.Column(db.Integer, primary_key=True)  
+    is_admin = db.Column(db.Boolean, default=False)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=True)  
     password_hash = db.Column(db.String(300), nullable=False)
