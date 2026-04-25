@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Админ-панель{% endblock %}
+
+{% block content %}
+<h1>⚙️ Админ-панель</h1>
+
+<!-- Статистика -->
+<div style="display: flex; gap: 20px; margin-bottom: 30px;">
+    <div class="card" style="flex: 1;">
+        <h3>📊 Статистика</h3>
+        <p>Пользователей: {{ users|length }}</p>
+        <p>Обзоров: {{ reviews|length }}</p>
+        <p>Игр: {{ games|length }}</p>
+    </div>
+</div>
+
+<!-- Список всех обзоров -->
+<h2>📝 Все обзоры</h2>
+<div class="reviews-grid">
+    {% for review in reviews %}
+    <div class="card">
+        <h3>{{ review.game.title }}</h3>
+        <div class="rating">{{ review.stars }}</div>
+        <p><strong>Автор:</strong> {{ review.author.username }}</p>
+        <p><strong>Дата:</strong> {{ review.created_at.strftime('%d.%m.%Y') }}</p>
+        <p>{{ review.short_review }}</p>
+        <a href="/review/{{ review.id }}" class="btn">Читать</a>
+        <a href="/admin/delete_review/{{ review.id }}" class="btn btn-danger" 
+           onclick="return confirm('Точно удалить этот обзор?')">🗑️ Удалить</a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Список всех пользователей -->
+<h2>👥 Пользователи</h2>
+<div class="reviews-grid">
+    {% for user in users %}
+    <div class="card">
+        <h3>{{ user.username }}</h3>
+        <p>Email: {{ user.email or 'Не указан' }}</p>
+        <p>Обзоров: {{ user.reviews|length }}</p>
+        <p>Админ: {{ '✅ Да' if user.is_admin else '❌ Нет' }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

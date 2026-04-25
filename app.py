@@ -268,8 +268,44 @@ def setup():
     game = Game(title='The Witcher 3', genre='RPG')
     db.session.add(game)
     db.session.commit()
+
+
     
     return "База данных готова! <a href='/'>На главную</a>"
+
+@app.route('/admin')
+@login_required
+def admin_panel():
+    """Админ-панель — только для админов"""
+    if not current_user.is_admin:
+        flash('У вас нет прав доступа к админ-панели', 'danger')
+        return redirect(url_for('home'))
+    
+    # Получаем все обзоры (всех пользователей)
+    all_reviews = Review.query.order_by(Review.created_at.desc()).all()
+    all_users = User.query.all()
+    all_games = Game.query.all()
+    
+    return render_template('admin.html', 
+                         reviews=all_reviews, 
+                         users=all_users, 
+                         games=all_games)
+
+
+@app.route('/admin/delete_review/<int:review_id>')
+@login_required
+def admin_delete_review(review_id):
+    """Админ может удалить ЛЮБОЙ обзор"""
+    if not current_user.is_admin:
+        flash('У вас нет прав', 'danger')
+        return redirect(url_for('home'))
+    
+    review = Review.query.get_or_404(review_id)
+    db.session.delete(review)
+    db.session.commit()
+    
+    flash(f'Обзор "{review.game.title}" удалён админом!', 'success')
+    return redirect(url_for('admin_panel'))
 
 
 if __name__ == '__main__':

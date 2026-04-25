@@ -10,7 +10,11 @@ class User(db.Model, UserMixin):
     
     __tablename__ = 'users'
     
+<<<<<<< HEAD
     id = db.Column(db.Integer, primary_key=True)  
+=======
+    id = db.Column(db.Integer, primary_key=True)  # было primaty_key
+>>>>>>> 5dcdb43 (add admin panel)
     is_admin = db.Column(db.Boolean, default=False)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=True)  
