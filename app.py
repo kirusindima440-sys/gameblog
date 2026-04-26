@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
+from bad_words import contains_bad_words
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user  # ИСПРАВЛЕНО!
 from database import db, init_db
 from models import Review, User, Game
@@ -50,6 +51,20 @@ def add_review():
         genre = request.form['genre']
         rating = int(request.form['rating'])
         review_text = request.form['review_text']
+
+        # 👇 ПРОВЕРКА НА МАТ
+        if contains_bad_words(game_name):
+            flash('Название игры содержит неприемлемые слова!', 'danger')
+            return render_template('add_review.html')
+        
+        if contains_bad_words(review_text):
+            flash('Текст обзора содержит неприемлемые слова!', 'danger')
+            return render_template('add_review.html')
+
+
+
+
+
         
         # Находим или создаём игру
         game = get_or_create_game(game_name, genre)
@@ -143,6 +158,23 @@ def edit_review(review_id):
         genre = request.form['genre']
         rating = int(request.form['rating'])
         review_text = request.form['review_text']
+
+
+        # 👇 ПРОВЕРКА НА МАТ
+        if contains_bad_words(game_name):
+            flash('Название игры содержит неприемлемые слова!', 'danger')
+            return render_template('edit_review.html', review=review)
+        
+        if contains_bad_words(review_text):
+            flash('Текст обзора содержит неприемлемые слова!', 'danger')
+            return render_template('edit_review.html', review=review)
+
+
+
+
+
+
+
         
         # Находим или создаём игру
         game = get_or_create_game(game_name, genre)
@@ -301,10 +333,14 @@ def admin_delete_review(review_id):
         return redirect(url_for('home'))
     
     review = Review.query.get_or_404(review_id)
+    
+    # Сохраняем название игры ДО удаления
+    game_title = review.game.title
+    
     db.session.delete(review)
     db.session.commit()
     
-    flash(f'Обзор "{review.game.title}" удалён админом!', 'success')
+    flash(f'Обзор "{game_title}" удалён админом!', 'success')
     return redirect(url_for('admin_panel'))
 
 
