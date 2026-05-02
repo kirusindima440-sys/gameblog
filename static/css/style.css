@@ -230,3 +230,119 @@ button:hover {
     border-radius: 8px;
     margin-bottom: 20px;
 }
+
+/* ===== ПАГИНАЦИЯ ===== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 40px 0;
+    flex-wrap: wrap;
+}
+
+.page-link, .page-current, .page-dots {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.page-link {
+    background: white;
+    color: #4a6fa5;
+    border: 1px solid #ddd;
+}
+
+.page-link:hover {
+    background: #4a6fa5;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.page-current {
+    background: #4a6fa5;
+    color: white;
+    border: 1px solid #4a6fa5;
+}
+
+.page-dots {
+    color: #999;
+}
+
+/* ===== ПОИСК ===== */
+.search-form {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.search-input {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    width: 200px;
+}
+
+.search-btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.search-btn:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+@media (max-width: 768px) {
+    .search-form {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .search-input {
+        flex: 1;
+    }
+}
+
+
+
+/* ===== СОРТИРОВКА ===== */
+.sort-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 10px;
+    background: white;
+    border-radius: 10px;
+    flex-wrap: wrap;
+}
+
+.sort-buttons span {
+    font-weight: bold;
+    color: #333;
+}
+
+.sort-link {
+    padding: 5px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    background: #f0f0f0;
+    color: #333;
+    transition: all 0.3s;
+}
+
+.sort-link:hover {
+    background: #4a6fa5;
+    color: white;
+}
+
+.sort-link.active {
+    background: #4a6fa5;
+    color: white;
+}

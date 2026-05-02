@@ -5,6 +5,17 @@
 {% block content %}
 <h1>🎮 Игровые обзоры</h1>
 
+<!-- Сортировка -->
+<div class="sort-buttons">
+    <span>Сортировать по:</span>
+    <a href="{{ url_for('home', sort='date', page=1) }}" 
+       class="sort-link {% if current_sort == 'date' %}active{% endif %}">📅 Новые</a>
+    <a href="{{ url_for('home', sort='rating', page=1) }}" 
+       class="sort-link {% if current_sort == 'rating' %}active{% endif %}">⭐ Рейтинг</a>
+    <a href="{{ url_for('home', sort='views', page=1) }}" 
+       class="sort-link {% if current_sort == 'views' %}active{% endif %}">👁️ Просмотры</a>
+</div>
+
 <div class="reviews-grid">
     {% for review in reviews %}
     <div class="card">
@@ -22,4 +33,30 @@
     </div>
     {% endfor %}
 </div>
+
+<!-- 👇 ПАГИНАЦИЯ ДОЛЖНА БЫТЬ ЗДЕСЬ (ПОСЛЕ ЦИКЛА) 👇 -->
+{% if pagination.pages > 1 %}
+<div class="pagination">
+    {% if pagination.has_prev %}
+        <a href="{{ url_for('home', page=pagination.prev_num) }}" class="page-link">← Предыдущая</a>
+    {% endif %}
+    
+    {% for page_num in pagination.iter_pages(left_edge=2, left_current=2, right_current=2, right_edge=2) %}
+        {% if page_num %}
+            {% if page_num == pagination.page %}
+                <span class="page-current">{{ page_num }}</span>
+            {% else %}
+                <a href="{{ url_for('home', page=page_num) }}" class="page-link">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            <span class="page-dots">...</span>
+        {% endif %}
+    {% endfor %}
+    
+    {% if pagination.has_next %}
+        <a href="{{ url_for('home', page=pagination.next_num) }}" class="page-link">Следующая →</a>
+    {% endif %}
+</div>
+{% endif %}
+
 {% endblock %}

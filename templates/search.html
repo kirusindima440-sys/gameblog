@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск: {{ query }}{% endblock %}
+
+{% block content %}
+<h1>🔍 Результаты поиска: "{{ query }}"</h1>
+
+{% if reviews %}
+    <p>Найдено обзоров: {{ reviews|length }}</p>
+    <div class="reviews-grid">
+        {% for review in reviews %}
+        <div class="card">
+            <h2>{{ review.game.title }}</h2>
+            <div class="rating">{{ review.stars }}</div>
+            <p><strong>Жанр:</strong> {{ review.game.genre }}</p>
+            <p><strong>Автор:</strong> {{ review.author.username }}</p>
+            <p>{{ review.short_review }}</p>
+            <a href="/review/{{ review.id }}" class="btn">Читать →</a>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card">
+        <p>😢 Ничего не найдено по запросу "{{ query }}"</p>
+        <a href="/" class="btn">Вернуться на главную</a>
+    </div>
+{% endif %}
+{% endblock %}

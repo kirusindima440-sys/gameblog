@@ -37,9 +37,38 @@ def get_or_create_game(title, genre):
 
 @app.route('/')
 def home():
-    reviews = Review.query.order_by(Review.created_at.desc()).all()
-    return render_template('index.html', reviews=reviews)
-
+    """Главная страница с пагинацией и сортировкой"""
+    
+    # Получаем параметры из URL
+    page = request.args.get('page', 1, type=int)
+    sort = request.args.get('sort', 'date')  # date, rating, views
+    
+    # Количество обзоров на странице
+    per_page = 10
+    
+    # Выбираем сортировку
+    if sort == 'rating':
+        order = Review.rating.desc()
+    elif sort == 'views':
+        order = Review.views.desc()
+    else:  # date (по умолчанию)
+        order = Review.created_at.desc()
+    
+    # Получаем обзоры с пагинацией и сортировкой
+    pagination = Review.query.order_by(order).paginate(
+        page=page, 
+        per_page=per_page, 
+        error_out=False
+    )
+    
+    reviews = pagination.items
+    
+    return render_template(
+        'index.html', 
+        reviews=reviews,
+        pagination=pagination,
+        current_sort=sort
+    )
 
 
 
@@ -342,6 +371,172 @@ def admin_delete_review(review_id):
     
     flash(f'Обзор "{game_title}" удалён админом!', 'success')
     return redirect(url_for('admin_panel'))
+
+
+
+
+@app.route('/search')
+def search():
+    """Страница результатов поиска"""
+    query = request.args.get('q', '').strip()
+    
+    if not query:
+        return redirect(url_for('home'))
+    
+    # Ищем игры, содержащие запрос
+    games = Game.query.filter(Game.title.contains(query)).all()
+    game_ids = [game.id for game in games]
+    
+    # Находим обзоры этих игр
+    reviews = Review.query.filter(Review.game_id.in_(game_ids)).order_by(
+        Review.created_at.desc()
+    ).all()
+    
+    return render_template('search.html', reviews=reviews, query=query)
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/api/reviews')
+def api_reviews():
+    """API: список всех обзоров в формате JSON"""
+    reviews = Review.query.order_by(Review.created_at.desc()).all()
+    
+    # Превращаем объекты в словари (JSON)
+    reviews_list = []
+    for review in reviews:
+        reviews_list.append({
+            'id': review.id,
+            'game': review.game.title,
+            'genre': review.game.genre,
+            'rating': review.rating,
+            'author': review.author.username,
+            'text': review.review_text[:200],  # только начало
+            'views': review.views,
+            'created_at': review.created_at.strftime('%d.%m.%Y')
+        })
+    
+    return reviews_list  # Flask сам превратит в JSON
+
+
+
+
+
+@app.route('/api/review/<int:review_id>')
+def api_review(review_id):
+    """API: один обзор в формате JSON"""
+    review = Review.query.get_or_404(review_id)
+    
+    return {
+        'id': review.id,
+        'game': review.game.title,
+        'genre': review.game.genre,
+        'rating': review.rating,
+        'author': review.author.username,
+        'text': review.review_text,
+        'views': review.views,
+        'created_at': review.created_at.strftime('%d.%m.%Y')
+    }
+
+
+
+
+@app.route('/api/games')
+def api_games():
+    """API: список всех игр"""
+    games = Game.query.all()
+    
+    games_list = []
+    for game in games:
+        games_list.append({
+            'id': game.id,
+            'title': game.title,
+            'genre': game.genre,
+            'reviews_count': Review.query.filter_by(game_id=game.id).count()
+        })
+    
+    return games_list
+
+
+
+
+
+
+@app.route('/api/users')
+def api_users():
+    """API: список всех пользователей"""
+    users = User.query.all()
+    
+    users_list = []
+    for user in users:
+        users_list.append({
+            'id': user.id,
+            'username': user.username,
+            'reviews_count': len(user.reviews),
+            'joined': user.created_at.strftime('%d.%m.%Y')
+        })
+    
+    return users_list
+
+
+
+@app.route('/api/search')
+def api_search():
+    """API: поиск обзоров по названию игры"""
+    query = request.args.get('q', '')
+    
+    if not query:
+        return {'error': 'Укажите параметр q'}, 400
+    
+    # Ищем игры, в названии которых есть query
+    games = Game.query.filter(Game.title.contains(query)).all()
+    game_ids = [game.id for game in games]
+    
+    reviews = Review.query.filter(Review.game_id.in_(game_ids)).all()
+    
+    results = []
+    for review in reviews:
+        results.append({
+            'id': review.id,
+            'game': review.game.title,
+            'author': review.author.username,
+            'rating': review.rating
+        })
+    
+    return results
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':

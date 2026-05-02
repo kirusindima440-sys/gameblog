@@ -15,6 +15,13 @@
                 <a href="/">Главная</a>
                 <a href="/users">Авторы</a>
                 <a href="/games">Игры</a>
+
+                <!-- ФОРМА ПОИСКА -->
+                <form action="/search" method="GET" class="search-form">
+                    <input type="text" name="q" placeholder="🔍 Поиск игр..." class="search-input">
+                    <button type="submit" class="search-btn">Найти</button>
+                </form>
+
                 {% if current_user.is_authenticated %}
                     <a href="/profile">{{ current_user.username }}</a>
                     <a href="/add">➕ Обзор</a>
