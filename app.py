@@ -4,9 +4,24 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from database import db, init_db
 from models import Review, User, Game
 from sqlalchemy.exc import IntegrityError
+import os                        
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'idi-ot-syda'
+
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'avatars')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 МБ
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 
 # Подключаем базу данных
 init_db(app)
@@ -15,7 +30,7 @@ init_db(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login' 
-login_manager.login_message = 'Пожалуйста, войдите в систему'  # ИСПРАВЛЕНО!
+login_manager.login_message = 'Пожалуйста, войдите в систему'  
 
 
 @login_manager.user_loader
@@ -393,6 +408,59 @@ def search():
     ).all()
     
     return render_template('search.html', reviews=reviews, query=query)
+
+
+
+
+
+
+
+
+
+
+@app.route('/upload_avatar', methods=['GET', 'POST'])
+@login_required
+def upload_avatar():
+    # ========== ПОСТ (обработка отправленной формы) ==========
+    if request.method == 'POST':
+        # 1. Проверяем, есть ли файл в запросе
+        if 'avatar' not in request.files:
+            flash('Файл не выбран', 'danger')
+            return redirect(url_for('profile'))
+        
+        file = request.files['avatar']
+        
+        # 2. Проверяем, выбрал ли пользователь файл (не пустое поле)
+        if file.filename == '':
+            flash('Файл не выбран', 'danger')
+            return redirect(url_for('profile'))
+        
+        # 3. Проверяем расширение файла
+        if not allowed_file(file.filename):
+            flash('Неподдерживаемый формат. Используйте: PNG, JPG, JPEG, GIF, WEBP', 'danger')
+            return redirect(url_for('profile'))
+        
+        # 4. Формируем безопасное имя файла
+        filename = secure_filename(f"user_{current_user.id}_{file.filename}")
+        
+        # 5. Сохраняем файл на диск
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        
+        # 6. Удаляем старую аватарку (если она не стандартная)
+        if current_user.avatar != 'default.jpg':
+            old_path = os.path.join(app.config['UPLOAD_FOLDER'], current_user.avatar)
+            if os.path.exists(old_path):
+                os.remove(old_path)
+        
+        # 7. Обновляем базу данных
+        current_user.avatar = filename
+        db.session.commit()
+        
+        flash('Аватарка обновлена!', 'success')
+        return redirect(url_for('profile'))
+    
+    # ========== GET (показ формы) ==========
+    return render_template('upload_avatar.html')
 
 
 

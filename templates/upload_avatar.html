@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Загрузить аватарку{% endblock %}
+
+{% block content %}
+<div class="form-card">
+    <h1>🖼️ Загрузить аватарку</h1>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>📁 Выберите файл</label>
+            <input type="file" name="avatar" accept="image/*" required>
+            <small>Поддерживаемые форматы: PNG, JPG, JPEG, GIF, WEBP. Максимум 5 МБ.</small>
+        </div>
+        
+        <button type="submit" class="btn">📤 Загрузить</button>
+        <a href="/profile" class="btn btn-warning">Отмена</a>
+    </form>
+</div>
+{% endblock %}

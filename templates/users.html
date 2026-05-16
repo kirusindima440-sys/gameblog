@@ -4,7 +4,6 @@
 
 {% block content %}
 <h1>👥 Все авторы</h1>
-
 <div class="reviews-grid">
     {% for user in users %}
     <div class="card">
@@ -14,6 +13,18 @@
         <p><strong>Дата регистрации:</strong> {{ user.created_at.strftime('%d.%m.%Y') }}</p>
         <a href="/user/{{ user.id }}" class="btn">Смотреть обзоры →</a>
     </div>
+
+
+<div class="card" style="text-align: center;">
+    <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}" 
+         alt="Avatar" 
+         style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 15px;">
+    <h2>{{ user.username }}</h2>
+    <p>Всего обзоров: {{ user.reviews|length }}</p>
+    <a href="/user/{{ user.id }}" class="btn">Смотреть обзоры →</a>
+</div>
+
+
     {% else %}
     <div class="card">
         <p>😢 Пока нет пользователей</p>

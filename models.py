@@ -16,6 +16,8 @@ class User(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)  
 
+    avatar = db.Column(db.String(200), default='default.jpg')
+
     is_admin = db.Column(db.Boolean, default=False)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=True)  
