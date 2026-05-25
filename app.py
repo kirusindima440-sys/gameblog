@@ -2,13 +2,17 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from bad_words import contains_bad_words
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user  # ИСПРАВЛЕНО!
 from database import db, init_db
-from models import Review, User, Game
+from models import Review, User, Game, Comment
 from sqlalchemy.exc import IntegrityError
 import os                        
 from werkzeug.utils import secure_filename
 
+# Загружаем переменные из файла .env
+from dotenv import load_dotenv
+load_dotenv()
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'idi-ot-syda'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'дефолтный_ключ_на_случай_ошибки')
 
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'avatars')
@@ -48,6 +52,83 @@ def get_or_create_game(title, genre):
         db.session.add(game)
         db.session.commit()
     return game
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/add_comment/<int:review_id>', methods=['POST'])
+@login_required
+def add_comment(review_id):
+    """Добавление комментария к обзору"""
+    review = Review.query.get_or_404(review_id)
+    comment_text = request.form.get('comment_text', '').strip()
+    
+    if not comment_text:
+        flash('Комментарий не может быть пустым', 'danger')
+        return redirect(url_for('show_review', review_id=review.id))
+    
+    comment = Comment(
+        text=comment_text,
+        user_id=current_user.id,
+        review_id=review.id
+    )
+    
+    db.session.add(comment)
+    db.session.commit()
+    
+    flash('Комментарий добавлен!', 'success')
+    return redirect(url_for('show_review', review_id=review.id))
+
+
+
+
+
+
+
+
+
+@app.route('/delete_comment/<int:comment_id>')
+@login_required
+def delete_comment(comment_id):
+    """Удаление комментария (свои или админ)"""
+    comment = Comment.query.get_or_404(comment_id)
+    review_id = comment.review_id
+    
+    # Проверка прав: автор или админ
+    if comment.user_id != current_user.id and not current_user.is_admin:
+        flash('Вы можете удалять только свои комментарии!', 'danger')
+        return redirect(url_for('show_review', review_id=review_id))
+    
+    db.session.delete(comment)
+    db.session.commit()
+    
+    flash('Комментарий удалён!', 'success')
+    return redirect(url_for('show_review', review_id=review_id))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @app.route('/')

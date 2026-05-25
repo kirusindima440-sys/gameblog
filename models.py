@@ -86,3 +86,38 @@ class Review(db.Model):
         if len(self.review_text) > 50:
             return self.review_text[:50] + '...'
         return self.review_text
+
+
+
+
+class Comment(db.Model):
+    """Модель комментария к обзору"""
+    __tablename__ = 'comments'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Внешние ключи
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=False)
+    
+    # Связи
+    author = db.relationship('User', backref='comments', lazy=True)
+    review = db.relationship('Review', backref='comments', lazy=True)
+    
+    def __repr__(self):
+        return f'<Comment by {self.author.username} on review {self.review_id}>'
+    
+    @property
+    def short_text(self):
+        if len(self.text) > 100:
+            return self.text[:100] + '...'
+        return self.text
+
+
+
+
+
+
+

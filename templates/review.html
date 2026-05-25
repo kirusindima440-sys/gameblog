@@ -22,4 +22,60 @@
            onclick="return confirm('Точно удалить?')">🗑️ Удалить</a>
     {% endif %}
 </div>
+
+
+
+<!-- КОММЕНТАРИИ -->
+<div class="comments-section" style="margin-top: 40px;">
+    <h2>💬 Комментарии ({{ review.comments|length }})</h2>
+    
+    <!-- Форма добавления комментария (только для залогиненных) -->
+    {% if current_user.is_authenticated %}
+    <div class="add-comment" style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+        <form method="POST" action="/add_comment/{{ review.id }}">
+            <div class="form-group">
+                <label>✏️ Ваш комментарий</label>
+                <textarea name="comment_text" rows="3" class="form-control" required placeholder="Напишите что-нибудь..."></textarea>
+            </div>
+            <button type="submit" class="btn">📤 Отправить</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="login-to-comment" style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 30px; text-align: center;">
+        <a href="/login">Войдите</a>, чтобы оставить комментарий
+    </div>
+    {% endif %}
+    
+    <!-- Список комментариев -->
+    <div class="comments-list">
+        {% for comment in review.comments|sort(attribute='created_at', reverse=True) %}
+        <div class="comment" style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #4a6fa5;">
+            <div class="comment-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="{{ url_for('static', filename='avatars/' + comment.author.avatar) }}" 
+                         style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%;">
+                    <strong>{{ comment.author.username }}</strong>
+                </div>
+                <small style="color: #999;">{{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+            </div>
+            <div class="comment-text">
+                {{ comment.text | replace('\n', '<br>') | safe }}
+            </div>
+            
+            <!-- Кнопка удаления (только для автора комментария или админа) -->
+            {% if current_user.id == comment.user_id or current_user.is_admin %}
+            <div class="comment-actions" style="margin-top: 10px;">
+                <a href="/delete_comment/{{ comment.id }}" class="btn-delete" 
+                   onclick="return confirm('Точно удалить комментарий?')" 
+                   style="color: #dc3545; font-size: 0.8em; text-decoration: none;">🗑️ Удалить</a>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="no-comments" style="background: #f8f9fa; padding: 30px; text-align: center; border-radius: 10px;">
+            <p>😢 Пока нет комментариев. Будьте первым!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
