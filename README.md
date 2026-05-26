@@ -46,8 +46,7 @@ GameBlog — это полноценный веб-сайт для публика
 
  Как запустить локально
 bash
-
-git clone https://github.com/kirusindima440-sys/gameblog.git
-cd gameblog
-pip install -r requirements.txt
-python app.py
+- git clone https://github.com/kirusindima440-sys/gameblog.git
+- cd gameblog
+- pip install -r requirements.txt
+- python app.py
