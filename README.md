@@ -1,15 +1,15 @@
  GameBlog — Игровой блог на Flask
 
-Живой демо-сайт:** https://dimonstr.pythonanywhere.com
+Живой демо-сайт: https://dimonstr.pythonanywhere.com
 
 О проекте
 GameBlog — это полноценный веб-сайт для публикации обзоров на игры. Пользователи могут регистрироваться, писать обзоры, оставлять комментарии, загружать аватарки.
 
  Использованные технологии
-- **Backend:** Python 3, Flask, Flask-Login, Flask-SQLAlchemy
-- **Database:** SQLite (локально), PostgreSQL (на сервере)
-- **Frontend:** HTML5, CSS3, Bootstrap (адаптивный дизайн)
-- **Deployment:** PythonAnywhere, Git, GitHub
+- Backend: Python 3, Flask, Flask-Login, Flask-SQLAlchemy
+- Database: SQLite (локально), PostgreSQL (на сервере)
+- Frontend: HTML5, CSS3, Bootstrap (адаптивный дизайн)
+- Deployment: PythonAnywhere, Git, GitHub
 
  Основные возможности
 -  Регистрация и аутентификация пользователей
@@ -25,7 +25,8 @@ GameBlog — это полноценный веб-сайт для публика
 -  Фильтр нецензурной лексики
 
  Как запустить локально
-```bash
+bash
+
 git clone https://github.com/kirusindima440-sys/gameblog.git
 cd gameblog
 pip install -r requirements.txt
