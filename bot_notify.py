@@ -2,12 +2,12 @@ import telebot
 from database import db
 from models import TelegramSubscriber
 
-TOKEN = '8915543382:AAHiXCm6MkTbti4xsaJ5h4d3LGBmbs7Lgeo'
+TOKEN = ''
 bot = telebot.TeleBot(TOKEN)
 
 def send_notification_to_all(review):
     """Отправляет уведомление о новом обзоре ВСЕМ подписчикам"""
-    # НЕ НУЖНО with app.app_context() - мы уже внутри контекста!
+    
     subscribers = TelegramSubscriber.query.all()
     
     if not subscribers:
