@@ -86,8 +86,14 @@ class Review(db.Model):
         if len(self.review_text) > 50:
             return self.review_text[:50] + '...'
         return self.review_text
-
-
+    
+    # 👇 ДОБАВЬ ЭТИ МЕТОДЫ
+    @property
+    def likes_count(self):
+        return Like.query.filter_by(review_id=self.id).count()
+    
+    def user_liked(self, user_id):
+        return Like.query.filter_by(review_id=self.id, user_id=user_id).first() is not None
 
 
 class Comment(db.Model):
@@ -117,7 +123,40 @@ class Comment(db.Model):
 
 
 
+class Like(db.Model):
+    """Модель лайка к обзору"""
+    __tablename__ = 'likes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Уникальность: один пользователь → один лайк на один обзор
+    __table_args__ = (db.UniqueConstraint('user_id', 'review_id', name='unique_like'),)
+    
+    # Связи
+    user = db.relationship('User', backref='user_likes')
+    review = db.relationship('Review', backref='review_likes')
 
 
 
 
+
+
+
+
+class TelegramSubscriber(db.Model):
+    """Модель подписчика на Telegram-уведомления"""
+    __tablename__ = 'telegram_subscribers'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    chat_id = db.Column(db.BigInteger, nullable=False, unique=True)
+    subscribed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Связь с пользователем
+    user = db.relationship('User', backref='telegram_subscription')
+    
+    def __repr__(self):
+        return f'<Subscriber {self.user.username}>'

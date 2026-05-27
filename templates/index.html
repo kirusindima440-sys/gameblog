@@ -14,6 +14,8 @@
        class="sort-link {% if current_sort == 'rating' %}active{% endif %}">⭐ Рейтинг</a>
     <a href="{{ url_for('home', sort='views', page=1) }}" 
        class="sort-link {% if current_sort == 'views' %}active{% endif %}">👁️ Просмотры</a>
+    <a href="{{ url_for('home', sort='likes', page=1) }}" 
+       class="sort-link {% if current_sort == 'likes' %}active{% endif %}">❤️ Лайки</a>
 </div>
 
 <div class="reviews-grid">
@@ -24,6 +26,7 @@
         <p><strong>Жанр:</strong> {{ review.game.genre }}</p>
         <p><strong>Автор:</strong> {{ review.author.username }}</p>
         <p>{{ review.short_review }}</p>
+        <p>❤️ {{ review.likes_count }} лайков</p>
         <a href="/review/{{ review.id }}" class="btn btn-primary">Читать →</a>
     </div>
     {% else %}

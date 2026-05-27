@@ -78,4 +78,33 @@
         {% endfor %}
     </div>
 </div>
+
+
+<!-- Блок лайков -->
+<div class="likes-section" style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
+    <a href="/like/{{ review.id }}" class="like-btn" style="text-decoration: none; font-size: 1.3em;">
+        {% if review.user_liked(current_user.id) %}
+            ❤️
+        {% else %}
+            🤍
+        {% endif %}
+    </a>
+    <span class="likes-count">{{ review.likes_count }} {{ 'лайк' if review.likes_count == 1 else 'лайков' }}</span>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 {% endblock %}

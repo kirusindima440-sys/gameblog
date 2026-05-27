@@ -2,10 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from bad_words import contains_bad_words
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user  # ИСПРАВЛЕНО!
 from database import db, init_db
-from models import Review, User, Game, Comment
+from models import Review, User, Game, Comment, Like
 from sqlalchemy.exc import IntegrityError
 import os                        
 from werkzeug.utils import secure_filename
+from bot_notify import send_notification_to_all
 
 # Загружаем переменные из файла .env
 from dotenv import load_dotenv
@@ -94,6 +95,45 @@ def add_comment(review_id):
 
 
 
+
+
+
+
+
+@app.route('/like/<int:review_id>')
+@login_required
+def like_review(review_id):
+    """Поставить или убрать лайк с обзора"""
+    review = Review.query.get_or_404(review_id)
+    
+    # Проверяем, есть ли уже лайк от этого пользователя
+    existing_like = Like.query.filter_by(
+        user_id=current_user.id, 
+        review_id=review.id
+    ).first()
+    
+    if existing_like:
+        # Убираем лайк
+        db.session.delete(existing_like)
+        flash('Лайк убран', 'info')
+    else:
+        # Добавляем лайк
+        new_like = Like(user_id=current_user.id, review_id=review.id)
+        db.session.add(new_like)
+        flash('❤️ Лайк поставлен!', 'success')
+    
+    db.session.commit()
+    
+    # Возвращаемся на ту же страницу
+    return redirect(request.referrer or url_for('home'))
+
+
+
+
+
+
+
+
 @app.route('/delete_comment/<int:comment_id>')
 @login_required
 def delete_comment(comment_id):
@@ -133,13 +173,10 @@ def delete_comment(comment_id):
 
 @app.route('/')
 def home():
-    """Главная страница с пагинацией и сортировкой"""
-    
     # Получаем параметры из URL
     page = request.args.get('page', 1, type=int)
-    sort = request.args.get('sort', 'date')  # date, rating, views
+    sort = request.args.get('sort', 'date')
     
-    # Количество обзоров на странице
     per_page = 10
     
     # Выбираем сортировку
@@ -147,24 +184,33 @@ def home():
         order = Review.rating.desc()
     elif sort == 'views':
         order = Review.views.desc()
+    elif sort == 'likes':
+        # Для сортировки по лайкам нужно сделать сложный запрос
+        # Сортируем по количеству лайков (от большего к меньшему)
+        order = db.func.count(Like.id).desc()
+        # Делаем запрос с LEFT JOIN
+        pagination = db.session.query(Review).outerjoin(Like, Review.id == Like.review_id)\
+            .group_by(Review.id)\
+            .order_by(order)\
+            .paginate(page=page, per_page=per_page, error_out=False)
+        reviews = pagination.items
+        return render_template('index.html', 
+                             reviews=reviews,
+                             pagination=pagination,
+                             current_sort=sort)
     else:  # date (по умолчанию)
         order = Review.created_at.desc()
     
-    # Получаем обзоры с пагинацией и сортировкой
+    # Обычная сортировка (без лайков)
     pagination = Review.query.order_by(order).paginate(
-        page=page, 
-        per_page=per_page, 
-        error_out=False
+        page=page, per_page=per_page, error_out=False
     )
-    
     reviews = pagination.items
     
-    return render_template(
-        'index.html', 
-        reviews=reviews,
-        pagination=pagination,
-        current_sort=sort
-    )
+    return render_template('index.html', 
+                         reviews=reviews,
+                         pagination=pagination,
+                         current_sort=sort)
 
 
 
@@ -204,6 +250,11 @@ def add_review():
         db.session.add(new_review)
         db.session.commit()
         
+         #  ИМПОРТ ВНУТРИ ФУНКЦИИ (чтобы избежать циклического импорта)
+
+        from bot_notify import send_notification_to_all
+        send_notification_to_all(new_review)
+        
         flash('Обзор добавлен!', 'success')
         return redirect(url_for('home'))
     
@@ -225,6 +276,8 @@ def show_review(review_id):
         session[viewed_key] = True  # Запоминаем, что смотрел
     
     return render_template('review.html', review=review)
+
+
 @app.route('/games')
 @login_required
 def games_list():
@@ -325,6 +378,8 @@ def delete_review(review_id):
     if review.user_id != current_user.id:
         flash('Вы можете удалять только свои обзоры!', 'danger')
         return redirect(url_for('home'))
+
+    Comment.query.filter_by(review_id=review.id).delete()
     
     db.session.delete(review)
     db.session.commit()
