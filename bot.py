@@ -8,7 +8,7 @@ from app import app
 from database import db
 from models import Review, TelegramSubscriber, User
 
-TOKEN = '8915543382:AAHiXCm6MkTbti4xsaJ5h4d3LGBmbs7Lgeo'
+TOKEN = ''
 bot = telebot.TeleBot(TOKEN)
 
 # Команда /start
