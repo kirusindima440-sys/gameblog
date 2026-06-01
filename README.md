@@ -42,15 +42,6 @@ GameBlog — это полноценный веб-сайт для публика
 
 
 
-## 🚀 Как запустить локально
-
-```bash
-git clone https://github.com/kirusindima440-sys/gameblog.git
-cd gameblog
-pip install -r requirements.txt
-python app.py
-
-
 📸 Скриншоты
 Главная страница
 https://screenshots/home.png
@@ -66,3 +57,13 @@ https://screenshots/admin.png
 
 Добавление обзора
 https://screenshots/add_review.png
+
+
+
+## 🚀 Как запустить локально
+
+```bash
+git clone https://github.com/kirusindima440-sys/gameblog.git
+cd gameblog
+pip install -r requirements.txt
+python app.py
