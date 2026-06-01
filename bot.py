@@ -24,7 +24,7 @@ from models import Review, TelegramSubscriber, User
 <<<<<<< HEAD
 TOKEN = ''
 bot = telebot.TeleBot(TOKEN)
-=======
+
 # Функция для экранирования HTML-символов
 def escape_html(text):
     """Экранирует специальные символы для HTML"""
@@ -35,7 +35,7 @@ def escape_html(text):
             .replace('<', '&lt;')
             .replace('>', '&gt;')
             .replace('"', '&quot;'))
->>>>>>> 517c4b3 (fix: bot token loading)
+
 
 # Команда /start
 @bot.message_handler(commands=['start'])
