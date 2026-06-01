@@ -44,19 +44,24 @@ GameBlog — это полноценный веб-сайт для публика
 
 📸 Скриншоты
 Главная страница
-https://screenshots/home.png
+<img width="1920" height="1037" alt="home" src="https://github.com/user-attachments/assets/04cd67e1-d660-49cc-843f-4666f28f3688" />
+
 
 Страница обзора
-https://screenshots/review.png
+<img width="1920" height="1038" alt="review" src="https://github.com/user-attachments/assets/f2ac705b-be20-44b9-bab7-74ee17635393" />
 
 Профиль пользователя
-https://screenshots/profile.png
+<img width="1920" height="1037" alt="profile" src="https://github.com/user-attachments/assets/c0ff0eda-4149-47e8-a787-4c3408f84275" />
+
 
 Админ-панель
-https://screenshots/admin.png
+<img width="1920" height="1036" alt="admin" src="https://github.com/user-attachments/assets/ac2768d0-06fc-491f-9879-9db49f25965d" />
+
 
 Добавление обзора
-https://screenshots/add_review.png
+<img width="1920" height="1037" alt="add_review" src="https://github.com/user-attachments/assets/33888ac9-c293-4bdb-abd7-457f65625950" />
+
+
 
 
 
