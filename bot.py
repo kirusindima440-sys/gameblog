@@ -21,8 +21,7 @@ from app import app
 from database import db
 from models import Review, TelegramSubscriber, User
 
-<<<<<<< HEAD
-TOKEN = ''
+
 bot = telebot.TeleBot(TOKEN)
 
 # Функция для экранирования HTML-символов
